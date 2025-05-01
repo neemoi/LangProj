@@ -1,0 +1,31 @@
+.main-page {
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .top-navbar {
+    background-color: #e67f01 !important;
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-container {
+    padding: 2rem 1rem;
+  }
+  
+  .main-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    text-align: center;
+  }
+  
+  .user-dashboard {
+    margin-top: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    padding: 1rem;
+    background-color: #fff;
+  }
