@@ -1,6 +1,5 @@
 ﻿using Application.DtoModels.Lessons.QuizQuestion;
 using Application.Services.Interfaces.IRepository.Lesons;
-using AutoMapper;
 using Common.Exceptions;
 using Domain.Models;
 using Infrastructure.Data;
@@ -36,15 +35,15 @@ namespace Persistance.Repository.Lesons.QuizQuestionRep
             }
 
             var allowedQuestionTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    "image_choice",
-                    "audio_choice",
-                    "image_audio_choice",
-                    "spelling",
-                    "grammar_selection",
-                    "pronunciation",
-                    "advanced_survey"
-                };
+            {
+                "ImageChoice",
+                "AudioChoice",
+                "ImageAudioChoice",
+                "Spelling",
+                "GrammarSelection",
+                "Pronunciation",
+                "AdvancedSurvey"
+            };
 
             if (string.IsNullOrWhiteSpace(entity.QuestionType) ||
                 !allowedQuestionTypes.Contains(entity.QuestionType))
@@ -153,48 +152,43 @@ namespace Persistance.Repository.Lesons.QuizQuestionRep
         {
             var quizQuestion = await _context.QuizQuestions
                 .Include(q => q.Answers)
-                .FirstOrDefaultAsync(q => q.Id == dto.QuizId);
+                .FirstOrDefaultAsync(q => q.Id == dto.Id);
 
             if (quizQuestion == null)
-            {
-                throw new NotFoundException($"QuizQuestion with ID {dto.QuizId} not found.");
-            }
+                throw new NotFoundException($"QuizQuestion with ID {dto.Id} not found.");
 
-            // Обновляем только те поля, которые были переданы в DTO
-            if (!string.IsNullOrEmpty(dto.QuestionType))
-            {
-                quizQuestion.QuestionType = dto.QuestionType;
-            }
+            quizQuestion.QuestionType = dto.QuestionType ?? quizQuestion.QuestionType;
+            quizQuestion.QuestionText = dto.QuestionText ?? quizQuestion.QuestionText;
+            quizQuestion.ImageUrl = dto.ImageUrl ?? quizQuestion.ImageUrl;
+            quizQuestion.AudioUrl = dto.AudioUrl ?? quizQuestion.AudioUrl;
+            quizQuestion.CorrectAnswer = dto.CorrectAnswer ?? quizQuestion.CorrectAnswer;
 
-            if (!string.IsNullOrEmpty(dto.QuestionText))
+            if (dto.Answers != null)
             {
-                quizQuestion.QuestionText = dto.QuestionText;
-            }
+                var incomingIds = dto.Answers
+                    .Where(a => a.Id != 0)
+                    .Select(a => a.Id)
+                    .ToList();
 
-            if (!string.IsNullOrEmpty(dto.ImageUrl))
-            {
-                quizQuestion.ImageUrl = dto.ImageUrl;
-            }
+                var answersToRemove = quizQuestion.Answers
+                    .Where(a => !incomingIds.Contains(a.Id))
+                    .ToList(); 
 
-            if (!string.IsNullOrEmpty(dto.AudioUrl))
-            {
-                quizQuestion.AudioUrl = dto.AudioUrl;
-            }
+                foreach (var answer in answersToRemove)
+                {
+                    quizQuestion.Answers.Remove(answer);
+                }
 
-            if (!string.IsNullOrEmpty(dto.CorrectAnswer))
-            {
-                quizQuestion.CorrectAnswer = dto.CorrectAnswer;
-            }
-
-            if (dto.Answers != null && dto.Answers.Any())
-            {
                 foreach (var answerDto in dto.Answers)
                 {
-                    var answer = quizQuestion.Answers.FirstOrDefault(a => a.Id == answerDto.Id);
-                    if (answer != null)
+                    if (answerDto.Id != 0)
                     {
-                        answer.AnswerText = answerDto.AnswerText;
-                        answer.IsCorrect = answerDto.IsCorrect;
+                        var existingAnswer = quizQuestion.Answers.FirstOrDefault(a => a.Id == answerDto.Id);
+                        if (existingAnswer != null)
+                        {
+                            existingAnswer.AnswerText = answerDto.AnswerText;
+                            existingAnswer.IsCorrect = answerDto.IsCorrect;
+                        }
                     }
                     else
                     {
@@ -246,6 +240,40 @@ namespace Persistance.Repository.Lesons.QuizQuestionRep
             {
                 _logger.LogError(ex, "Unexpected error occurred while deleting quiz question");
                 throw new ApplicationException("An unexpected error occurred while deleting the quiz question.", ex);
+            }
+        }
+
+        public async Task<QuizAnswer> DeleteQuizAnswerAsync(int id)
+        {
+            if (id <= 0)
+            {
+                _logger.LogWarning("Attempted to delete quiz answer with invalid ID.");
+                throw new ArgumentOutOfRangeException(nameof(id), "ID must be greater than zero");
+            }
+
+            try
+            {
+                var answer = await _context.QuizAnswers.FindAsync(id);
+                if (answer == null)
+                {
+                    _logger.LogWarning("Quiz answer with ID {id} not found.", id);
+                    throw new NotFoundException($"QuizAnswer with ID {id} not found", "QUIZ_ANSWER_NOT_FOUND");
+                }
+
+                _context.QuizAnswers.Remove(answer);
+                await _context.SaveChangesAsync();
+
+                return answer;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting quiz answer");
+                throw new DatabaseException("An error occurred while deleting the quiz answer.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error occurred while deleting quiz answer");
+                throw new ApplicationException("An unexpected error occurred while deleting the quiz answer.", ex);
             }
         }
 

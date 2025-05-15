@@ -21,6 +21,19 @@ namespace Application.Services.Implementations.Functions
             _mapper = mapper;
         }
 
+        public async Task<IEnumerable<FunctionWordDto>> GetWordsByPartOfSpeechIdAsync(int partOfSpeechId)
+        {
+            var words = await _repository.GetWordsByPartOfSpeechIdAsync(partOfSpeechId);
+
+            return words.Select(w => new FunctionWordDto
+            {
+                Id = w.Id,
+                Name = w.Name,
+                Translation = w.Translation,
+                PartOfSpeechId = w.PartOfSpeechId
+            });
+        }
+
         public async Task<PartOfSpeechDto?> GetPartOfSpeechByIdAsync(int id)
         {
             try
@@ -78,8 +91,8 @@ namespace Application.Services.Implementations.Functions
                     throw new KeyNotFoundException($"PartOfSpeech with ID {dto.Id} not found");
                 }
 
-                if (!string.IsNullOrWhiteSpace(dto.Word))
-                    existing.Name = dto.Word;
+                if (!string.IsNullOrWhiteSpace(dto.name))
+                    existing.Name = dto.name;
 
                 await _repository.UpdatePartOfSpeechAsync(existing);
                 

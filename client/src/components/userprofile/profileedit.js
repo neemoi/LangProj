@@ -7,6 +7,7 @@ import {
   FaMapMarkerAlt, 
   FaHeart,
 } from 'react-icons/fa';
+import API_CONFIG from '../src/config';
 
 const ProfileEdit = ({ userData, setUserData, setError }) => {
   const [activeKey, setActiveKey] = useState('general');
@@ -32,7 +33,7 @@ const ProfileEdit = ({ userData, setUserData, setError }) => {
     try {
       setIsSubmitting(true);
 
-      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/api/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +65,6 @@ const ProfileEdit = ({ userData, setUserData, setError }) => {
     <div className="profile-edit-container">
       <Form onSubmit={handleSubmit}>
         <Accordion activeKey={activeKey} onSelect={(k) => setActiveKey(k)} flush>
-
           <Accordion.Item eventKey="general" className="mb-3 border-0">
             <Accordion.Header className="accordion-header">
               <div className="d-flex align-items-center">

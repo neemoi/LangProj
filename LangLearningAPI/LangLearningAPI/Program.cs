@@ -184,6 +184,218 @@ internal class Program
             db.Database.Migrate();
 
             await SeedData(scope.ServiceProvider);
+
+            // Set UTF-8 encoding for proper character support
+            await db.Database.ExecuteSqlRawAsync("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;");
+
+            // Insert parts of speech
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `PartOfSpeechs` (`Id`, `Name`) VALUES 
+            (1,'Article');
+        ");
+
+            // Insert function words
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `FunctionWords` (`Id`, `Name`, `Translation`, `PartOfSpeechId`) VALUES 
+            (1,'a','indefinite article (before consonant sounds)',1),
+            (2,'an','indefinite article (before vowel sounds)',1),
+            (3,'the','definite article',1);
+        ");
+
+            // Insert pronunciation categories
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `PronunciationCategories` (`Id`, `Name`) VALUES 
+            (1,'Office'),
+            (2,'School'),
+            (3,'Computer');
+        ");
+
+            // Insert lessons
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `Lessons` (`Id`, `Title`, `Description`, `VideoUrl`, `CreatedAt`, `PdfUrl`) VALUES 
+            (1,'Domestic Animals and Animals 1 - Articles a, an, the','Lesson description: This lesson introduces nouns and articles. Nouns name objects. All nouns in this lesson refer to animal names. Most nouns are preceded by articles - words that indicate whether the noun refers to a general concept or a specific object.','https://youtu.be/6nNUApAQA0M','2025-05-13 11:25:55.305046','https://winner.gfriend.com/content/pdf/en/EN_Lesson1.pdf');
+        ");
+
+            // Insert lesson words
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `LessonWords` (`Id`, `LessonId`, `Name`, `Translation`, `ImageUrl`, `Type`) VALUES 
+            (1,1,'animal','animal','https://winner.gfriend.com/Content/media/images/lessons48/tmb/001_01.jpg','Keyword'),
+            (2,1,'cat','cat','https://winner.gfriend.com/Content/media/images/lessons48/tmb/001_02.jpg','Keyword'),
+            (3,1,'cow','cow','https://winner.gfriend.com/Content/media/images/lessons48/tmb/001_03.jpg','Keyword'),
+            (4,1,'dog','dog','https://winner.gfriend.com/Content/media/images/lessons48/tmb/001_04.jpg','Keyword'),
+            (5,1,'horse','horse','https://winner.gfriend.com/Content/media/images/lessons48/tmb/001_05.jpg','Keyword'),
+            (6,1,'a','indefinite article','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Keyword'),
+            (7,1,'an','indefinite article (before vowels)','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Keyword'),
+            (8,1,'the','definite article','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Keyword');
+        ");
+
+            // Insert lesson phrases
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `LessonPhrases` (`Id`, `LessonId`, `PhraseText`, `Translation`, `ImageUrl`) VALUES 
+            (1,1,'a dog','a dog',''),
+            (2,1,'a horse','a horse',''),
+            (3,1,'animals','animals',''),
+            (4,1,'cats','cats',''),
+            (5,1,'cows','cows',''),
+            (6,1,'dogs','dogs',''),
+            (7,1,'horses','horses',''),
+            (8,1,'the animal','the animal',''),
+            (9,1,'the animals','the animals',''),
+            (10,1,'the cat','the cat',''),
+            (11,1,'the cats','the cats',''),
+            (12,1,'the cow','the cow',''),
+            (13,1,'the cows','the cows',''),
+            (14,1,'the dog','the dog',''),
+            (15,1,'the dogs','the dogs',''),
+            (16,1,'the horse','the horse',''),
+            (17,1,'the horses','the horses','');
+        ");
+
+            // Insert word items for pronunciation
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `WordItems` (`Id`, `Name`, `ImagePath`, `CategoryId`) VALUES 
+            (1,'computer','https://example.com/images/computer.jpg',3),
+            (2,'printer','https://example.com/images/printer.jpg',3),
+            (3,'keyboard','https://example.com/images/keyboard.jpg',3),
+            (4,'teacher','https://example.com/images/teacher.jpg',2),
+            (5,'student','https://example.com/images/student.jpg',2),
+            (6,'desk','https://example.com/images/desk.jpg',1),
+            (7,'meeting','https://example.com/images/meeting.jpg',1);
+        ");
+
+            // Insert quizzes
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `Quizzes` (`Id`, `LessonId`, `Type`, `CreatedAt`) VALUES 
+            (1,1,'NOUNS','2025-05-13 11:43:39.062206'),
+            (2,1,'GRAMMAR','2025-05-13 11:47:42.676655');
+        ");
+
+            // Insert quiz questions
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `QuizQuestions` (`Id`, `QuizId`, `QuestionType`, `QuestionText`, `ImageUrl`, `AudioUrl`, `CorrectAnswer`) VALUES 
+            (1,1,'ImageChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg',NULL,'Test'),
+            (2,1,'ImageChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','','Test'),
+            (3,1,'AudioChoice','Test',NULL,'http://localhost:3000/admin/lessons/1','Test'),
+            (4,1,'AudioChoice','Test','','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Test'),
+            (5,1,'ImageAudioChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Test 2'),
+            (6,1,'ImageAudioChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Test 2'),
+            (7,1,'Spelling','Test',NULL,NULL,'Test'),
+            (8,1,'Spelling','Test','','','Test'),
+            (9,1,'GrammarSelection','Test',NULL,NULL,'Test'),
+            (10,1,'GrammarSelection','Test','','','Test'),
+            (11,1,'Pronunciation','Test',NULL,NULL,'Test'),
+            (12,1,'Pronunciation','Test','','','Test'),
+            (13,1,'AdvancedSurvey','Test',NULL,NULL,'Test'),
+            (14,1,'AdvancedSurvey','Test','','','Test'),
+            (15,2,'ImageChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg',NULL,'Test'),
+            (16,2,'ImageChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','','Test'),
+            (17,2,'AudioChoice','Test',NULL,'https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Test'),
+            (18,2,'AudioChoice','Test','','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Test'),
+            (19,2,'ImageAudioChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Test'),
+            (20,2,'ImageAudioChoice','Test','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg','Test'),
+            (21,2,'Spelling','Test',NULL,NULL,'Test'),
+            (22,2,'Spelling','Test','','','Test'),
+            (23,2,'GrammarSelection','Test',NULL,NULL,'Test'),
+            (24,2,'GrammarSelection','Test','','','Test'),
+            (25,2,'GrammarSelection','Test',NULL,NULL,'Test'),
+            (27,2,'Pronunciation','Test',NULL,NULL,'Test'),
+            (28,2,'Pronunciation','Test','','','Test'),
+            (29,2,'AdvancedSurvey','Test',NULL,NULL,'Test'),
+            (30,2,'AdvancedSurvey','Test','','','Test');
+        ");
+
+            // Insert quiz answers
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `QuizAnswers` (`Id`, `QuestionId`, `AnswerText`, `IsCorrect`) VALUES 
+            (1,1,'Test 1',0),
+            (2,1,'Test 2',1),
+            (3,1,'Test 3',0),
+            (4,2,'Test 1',0),
+            (5,2,'Test 2',1),
+            (6,2,'Test 3',0),
+            (7,3,'Test 1',0),
+            (8,3,'Test 2',0),
+            (9,3,'Test 3',0),
+            (10,3,'Test',1),
+            (15,4,'Test 1',0),
+            (16,4,'Test 2',0),
+            (17,4,'Test 3',0),
+            (18,4,'Test',1),
+            (19,5,'Test 1',0),
+            (20,5,'Test 2',1),
+            (21,6,'Test 1',0),
+            (22,6,'Test 2',1),
+            (23,7,'',0),
+            (24,7,'',0),
+            (25,8,'',0),
+            (26,8,'',0),
+            (27,9,'',0),
+            (28,9,'',0),
+            (29,10,'',0),
+            (30,10,'',0),
+            (31,11,'',0),
+            (32,11,'',0),
+            (33,12,'',0),
+            (34,12,'',0),
+            (35,13,'',0),
+            (36,13,'',0),
+            (37,14,'',0),
+            (38,14,'',0),
+            (39,15,'Test 1',0),
+            (40,15,'Test 2',1),
+            (41,16,'Test 1',0),
+            (42,16,'Test 2',1),
+            (43,17,'Test 1',0),
+            (44,17,'Test 2',0),
+            (45,17,'Test 3',1),
+            (46,18,'Test 1',0),
+            (47,18,'Test 2',0),
+            (48,18,'Test 3',1),
+            (49,19,'Test 1',0),
+            (50,19,'Test 2',1),
+            (51,20,'Test 1',0),
+            (52,20,'Test 2',1),
+            (53,21,'',0),
+            (54,21,'',0),
+            (55,22,'',0),
+            (56,22,'',0),
+            (57,23,'',0),
+            (58,23,'',0),
+            (59,24,'',0),
+            (60,24,'',0),
+            (61,25,'',0),
+            (62,25,'',0),
+            (65,27,'',0),
+            (66,27,'',0),
+            (67,28,'',0),
+            (68,28,'',0),
+            (69,29,'',0),
+            (70,29,'',0),
+            (71,30,'',0),
+            (72,30,'',0);
+        ");
+
+            // Insert alphabet letters
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `AlphabetLetters` (`Id`, `Symbol`, `ImageUrl`) VALUES 
+            (1,'A','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg'),
+            (2,'B','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg'),
+            (3,'C','https://winner.gfriend.com/Content/media/images/lessons48/tmb/aart.jpg');
+        ");
+
+            // Insert noun words
+            await db.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO `NounWords` (`Id`, `Name`, `ImageUrl`, `AlphabetLetterId`) VALUES 
+            (1,'accident','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0010.jpg',1),
+            (2,'account','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0020.jpg',1),
+            (3,'ache','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0030.jpg',1),
+            (4,'baby','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0240.jpg',2),
+            (5,'back','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0250.jpg',2),
+            (6,'bag','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0260.jpg',2),
+            (7,'cake','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0700.jpg',3),
+            (8,'camera','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0710.jpg',3),
+            (9,'car','https://winner.gfriend.com/Content/media/images/Noun/tmb/_0720.jpg',3);
+        ");
         }
 
         if (app.Environment.IsDevelopment())

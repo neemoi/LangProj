@@ -111,6 +111,13 @@ namespace LangLearningAPI.Controllers.Lessons
             }
         }
 
+        [HttpDelete("answers/{id}")]
+        public async Task<IActionResult> DeleteAnswer(int id)
+        {
+            var deleted = await _quizQuestionService.DeleteQuizAnswerAsync(id);
+            return Ok(deleted);
+        }
+
         [HttpGet("quiz/{quizId}")]
         public async Task<IActionResult> GetQuizQuestionsByQuizId(int quizId)
         {

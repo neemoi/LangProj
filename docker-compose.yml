@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mysql-db:
-    image: mysql:8.0.36
+    image: mysql:8.0.28
     container_name: langlearning-mysql
     restart: always
     environment:
@@ -11,15 +11,15 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
     ports:
-      - "3307:3306"
+      - "3310:3306" 
     networks:
       - app-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin", "--silent"]
-      interval: 3s
+      interval: 5s
       timeout: 10s
       retries: 30
-      start_period: 40s
+      start_period: 60s
 
   langlearning-api:
     build:

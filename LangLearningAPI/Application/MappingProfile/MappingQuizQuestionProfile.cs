@@ -1,5 +1,4 @@
-﻿using Application.DtoModels.Lessons.Quiz;
-using Application.DtoModels.Lessons.QuizQuestion;
+﻿using Application.DtoModels.Lessons.QuizQuestion;
 using AutoMapper;
 using Domain.Models;
 
@@ -10,7 +9,7 @@ namespace Application.MappingProfile
         public MappingQuizQuestionProfile()
         {
             CreateMap<QuizQuestion, QuizQuestionDto>().ReverseMap();
-            CreateMap<QuizAnswerDto, QuizAnswer>().ReverseMap();
+            CreateMap<DtoModels.Lessons.Quiz.QuizAnswerDto, QuizAnswer>().ReverseMap();
             CreateMap<CreateQuizQuestionDto, QuizQuestion>();
             CreateMap<UpdateQuizQuestionDto, QuizQuestion>();
         }

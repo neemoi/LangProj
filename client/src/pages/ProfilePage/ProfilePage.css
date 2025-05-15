@@ -1,23 +1,66 @@
+.main-content {
+  padding-top: 20px;
+}
+
+.navbar-fixed ~ .main-content {
+  padding-top: calc(80px + 20px);
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding-top: 60px;
+  }
+  
+  .navbar-fixed ~ .main-content {
+    padding-top: calc(60px + 15px);
+  }
+}
+
 .profile-page {
+  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   background-color: #f8f9fa;
-  padding: 0 0 2.5rem 0;
-  min-height: calc(100vh);
+}
+
+.main-content {
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  margin-left: 0;
+  padding-top: 20px;
+}
+
+.main-content.sidebar-open {
+  margin-left: 250px;
 }
 
 .profile-container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+}
+
 .profile-header {
-  border-left: 4px solid #e67f01;
+  border-left: 4px solid #F97316;
   padding-left: 2rem;
   margin-bottom: 3rem;
 }
 
 .text-gradient {
-  background: linear-gradient(to right, #e67f01, #e67f01);
+  background: linear-gradient(to right, #F97316, #F97316);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -31,7 +74,7 @@
 }
 
 .profile-view-card .card-header {
-  background: linear-gradient(135deg, #e67f01, #e67f01);
+  background: linear-gradient(135deg, #F97316, #F97316);
   color: white;
   font-weight: 600;
   border-bottom: none;
@@ -79,7 +122,7 @@
 
 .list-group-item strong svg {
   margin-right: 1rem;
-  color: #e67f01;
+  color: #F97316;
   font-size: 1.1rem;
 }
 
@@ -122,11 +165,11 @@
 .form-floating > .form-control:not(:placeholder-shown) ~ label,
 .form-floating > .form-select ~ label {
   transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem);
-  color: #e67f01;
+  color: #F97316;
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #e67f01 !important;
+  border-color: #F97316 !important;
   box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.2) !important;
 }
 
@@ -144,7 +187,7 @@
 
 .accordion-header:not(.collapsed) {
   background-color: rgba(253, 126, 20, 0.1) !important;
-  color: #e67f01 !important;
+  color: #F97316 !important;
 }
 
 .accordion-button {
@@ -174,12 +217,12 @@
 
 .icon-bg svg {
   font-size: 1.2rem;
-  color: #e67f01;
+  color: #F97316;
 }
 
 .btn-primary {
-  background-color: #e67f01 !important;
-  border-color: #e67f01 !important;
+  background-color: #F97316 !important;
+  border-color: #F97316 !important;
   padding: 0.9rem 2.5rem;
   font-weight: 600;
   font-size: 1.05rem;
@@ -188,8 +231,8 @@
 }
 
 .btn-primary:hover {
-  background-color: #e67f01 !important;
-  border-color: #e67f01 !important;
+  background-color: #F97316 !important;
+  border-color: #F97316 !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(253, 126, 20, 0.3);
 }
@@ -205,6 +248,14 @@
 }
 
 @media (max-width: 992px) {
+  .main-content.sidebar-open {
+    margin-left: 0;
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+  
   .profile-container {
     padding: 0 1.5rem;
   }
@@ -224,8 +275,8 @@
 }
 
 @media (max-width: 768px) {
-  .profile-page {
-    padding: 1.5rem 0;
+  .main-content {
+    padding-top: 1.5rem;
   }
   
   .profile-container {

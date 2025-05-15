@@ -104,8 +104,8 @@ public class FunctionWordService : IFunctionWordService
                 throw new KeyNotFoundException($"FunctionWord with ID {dto.Id} not found");
             }
 
-            if (!string.IsNullOrWhiteSpace(dto.Word))
-                existingEntity.Name = dto.Word;
+            if (!string.IsNullOrWhiteSpace(dto.name))
+                existingEntity.Name = dto.name;
 
             await _unitOfWork.FunctionWordRepository.UpdateFunctionWordAsync(existingEntity);
 

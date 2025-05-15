@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Alert, Container } from 'react-bootstrap';
 import UsersManagement from './UsersManagement';
-import Navigation from '../../components/layout/Navigation/Navigation';
 import './admin.css';
 
 const AdminPanel = () => {
@@ -10,8 +9,6 @@ const AdminPanel = () => {
 
   return (
     <div className="admin-app">
-      <Navigation />
-      
       <div className="admin-content">
         <Container>
           <div className="admin-header">
@@ -35,14 +32,7 @@ const AdminPanel = () => {
             onSelect={(k) => setActiveTab(k)}
             className="admin-tabs"
           >
-            <Tab 
-              eventKey="users" 
-              title={
-                <span className="tab-title">
-                  <i className="fas fa-users"></i> Пользователи
-                </span>
-              }
-            >
+            <Tab eventKey="users" title="Пользователи">
               <UsersManagement setError={setError} />
             </Tab>
           </Tabs>

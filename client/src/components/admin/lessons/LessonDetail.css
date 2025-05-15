@@ -1,0 +1,50 @@
+.lesson-media-container {
+  margin-bottom: 2rem;
+}
+
+.lesson-video {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.lesson-video iframe {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #000;
+}
+
+.lesson-video video {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #000;
+}
+
+.lesson-pdf {
+  margin-top: 1.5rem;
+}
+
+.pdf-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.lesson-loading, .lesson-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.lesson-header {
+  margin-bottom: 2rem;
+}
+
+.lesson-meta .badge {
+  margin-right: 0.5rem;
+}
+
+.lesson-description {
+  margin-bottom: 2rem;
+  border-radius: 8px;
+}

@@ -14,7 +14,9 @@ namespace Application.Services.Interfaces.IRepository.Lesons
         Task<QuizQuestion> UpdateQuizQuestionAsync(UpdateQuizQuestionDto dto);
 
         Task<QuizQuestion> DeleteQuizQuestionAsync(int id);
-        
+
+        Task<QuizAnswer> DeleteQuizAnswerAsync(int id);
+
         Task<IEnumerable<QuizQuestion>> GetByQuizIdAsync(int quizId);
 
         Task<bool> QuizExistsAsync(int quizId);

@@ -57,7 +57,7 @@ namespace Application.MappingProfile
             CreateMap<CreateQuizDto, QuizQuestion>();
             CreateMap<CreateQuizDto, QuizQuestion>();
 
-            CreateMap<QuizAnswer, QuizAnswerDto>();
+            CreateMap<QuizAnswer, DtoModels.Lessons.Quiz.QuizAnswerDto>();
             CreateMap<CreateQuizDto, QuizAnswer>();
             CreateMap<CreateQuizDto, QuizAnswer>();
         }

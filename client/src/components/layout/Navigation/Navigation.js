@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Button, Container, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Dropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { List, X, PersonCircle, Gear, BoxArrowRight, PersonPlus } from 'react-bootstrap-icons';
 import AuthModal from '../../auth/AuthModal/AuthModal';
 import RegisterModal from '../../auth/RegisterModal/RegisterModal';
+import './Navigation.css';
 
-const Navigation = () => {
+const Navigation = ({ onToggleSidebar, isSidebarOpen, onLoginSuccess }) => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -17,7 +19,17 @@ const Navigation = () => {
 
   const handleLoginSuccess = (userData) => {
     setCurrentUser(userData);
+    localStorage.setItem('currentUser', JSON.stringify(userData));
     setShowAuthModal(false);
+
+    if (!isSidebarOpen) {
+      onToggleSidebar();
+    }
+
+    // Передаём данные родительскому компоненту (MainPage)
+    if (onLoginSuccess) {
+      onLoginSuccess(userData);
+    }
   };
 
   const handleLogout = () => {
@@ -25,50 +37,95 @@ const Navigation = () => {
     localStorage.removeItem('userToken');
     setCurrentUser(null);
     navigate('/');
-    window.dispatchEvent(new Event('storage'));
+    window.location.reload();
   };
 
   return (
     <>
-      <Navbar bg="orange" variant="dark" expand="lg" className="top-navbar">
-        <Container>
-          <Navbar.Brand as={Link} to="/">Language + Learning</Navbar.Brand>
+      <Navbar bg="orange" variant="dark" expand="lg" className="custom-navbar" fixed="top">
+        <Container fluid>
+          {currentUser && (
+            <Button 
+              variant="orange" 
+              onClick={onToggleSidebar}
+              className="sidebar-toggle-btn"
+            >
+              {isSidebarOpen ? <X size={24} /> : <List size={24} />}
+            </Button>
+          )}
+          
+          <Navbar.Brand as={Link} to="/" className="navbar-brand">
+            Language + Learning
+          </Navbar.Brand>
+
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-center">
+          
+          <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+            <Nav className="align-items-center">
               {currentUser ? (
                 <>
-                  <Navbar.Text className="me-3">
+                  <Navbar.Text className="nav-user-info me-3">
                     Привет, <strong>{currentUser.username}</strong> ({currentUser.role})
                   </Navbar.Text>
 
-                  <Dropdown align="end" className="me-2">
-                    <Dropdown.Toggle variant="outline-light" id="dropdown-menu">
-                      Меню
+                  <Dropdown align="end">
+                    <Dropdown.Toggle 
+                      variant="orange" 
+                      id="dropdown-profile" 
+                      className="profile-toggle"
+                    >
+                      <div className="profile-avatar">
+                        {currentUser.username.charAt(0).toUpperCase()}
+                      </div>
                     </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/profile">Профиль</Dropdown.Item>
+
+                    <Dropdown.Menu className="profile-dropdown">
+                      <Dropdown.Header>
+                        <div className="d-flex align-items-center">
+                          <div className="profile-avatar me-2">
+                            {currentUser.username.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="fw-bold">{currentUser.username}</div>
+                            <div className="text-muted small">{currentUser.role}</div>
+                          </div>
+                        </div>
+                      </Dropdown.Header>
+                      
+                      <Dropdown.Divider />
+                      
+                      <Dropdown.Item as={Link} to="/profile">
+                        <PersonCircle className="me-2" />
+                        Профиль
+                      </Dropdown.Item>
+                      
                       {currentUser.role === 'Admin' && (
                         <>
-                          <Dropdown.Item as={Link} to="/admin/users">
+                          <Dropdown.Item as={Link} to="/admin">
+                            <Gear className="me-2" />
                             Админ-панель
                           </Dropdown.Item>
                           <Dropdown.Item onClick={() => setShowRegisterModal(true)}>
-                            Зарегистрировать пользователя
+                            <PersonPlus className="me-2" />
+                            Регистрация
                           </Dropdown.Item>
                         </>
                       )}
+                      
+                      <Dropdown.Divider />
+                      
+                      <Dropdown.Item onClick={handleLogout}>
+                        <BoxArrowRight className="me-2" />
+                        Выход
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
-
-                  <Button variant="outline-light" onClick={handleLogout}>
-                    Выход
-                  </Button>
                 </>
               ) : (
                 <Button 
                   variant="outline-light" 
                   onClick={() => setShowAuthModal(true)}
+                  className="nav-button me-2"
                 >
                   Вход
                 </Button>

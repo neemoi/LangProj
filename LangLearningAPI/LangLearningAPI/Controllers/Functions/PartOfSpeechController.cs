@@ -1,5 +1,7 @@
 ﻿using Application.DtoModels.Functions;
+using Application.Services.Implementations.Functions;
 using Application.Services.Interfaces.IServices.Functions;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LangLearningAPI.Controllers.Functions
@@ -15,6 +17,24 @@ namespace LangLearningAPI.Controllers.Functions
         {
             _service = service;
             _logger = logger;
+        }
+
+        [HttpGet("{id}/words")]
+        public async Task<ActionResult<IEnumerable<FunctionWordDto>>> GetWordsByPartOfSpeechId(int id)
+        {
+            try
+            {
+                var words = await _service.GetWordsByPartOfSpeechIdAsync(id);
+
+                if (!words.Any())
+                    return NotFound($"No words found for part of speech ID {id}");
+
+                return Ok(words);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpGet("{id}", Name = "GetPartOfSpeechById")]

@@ -18,6 +18,26 @@ namespace Persistance.Repository.Functions
             _logger = logger;
         }
 
+        public async Task<IEnumerable<FunctionWord>> GetWordsByPartOfSpeechIdAsync(int partOfSpeechId)
+        {
+            try
+            {
+                var partOfSpeech = await _context.PartOfSpeechs
+                    .Include(p => p.Words)
+                    .FirstOrDefaultAsync(p => p.Id == partOfSpeechId);
+
+                if (partOfSpeech == null)
+                    throw new KeyNotFoundException($"PartOfSpeech with ID {partOfSpeechId} not found");
+
+                return partOfSpeech.Words;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting words for PartOfSpeech with ID {Id}", partOfSpeechId);
+                throw;
+            }
+        }
+
         public async Task<PartOfSpeech?> GetByIPartOfSpeechdAsync(int id)
         {
             return await _context.PartOfSpeechs.FindAsync(id);
@@ -52,7 +72,10 @@ namespace Persistance.Repository.Functions
                     throw new KeyNotFoundException($"PartOfSpeech with ID {entity.Id} not found");
 
                 if (!string.IsNullOrEmpty(entity.Name))
+                {
                     existing.Name = entity.Name;
+                    _context.Entry(existing).Property(x => x.Name).IsModified = true;
+                }
 
                 await _context.SaveChangesAsync();
             }
@@ -62,6 +85,7 @@ namespace Persistance.Repository.Functions
                 throw;
             }
         }
+
 
         public async Task<bool> DeletePartOfSpeechAsync(int id)
         {

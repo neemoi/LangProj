@@ -4,6 +4,8 @@ namespace Application.DtoModels.Lessons.QuizQuestion
 {
     public class UpdateQuizQuestionDto
     {
+        public int Id { get; set; }
+
         public int QuizId { get; set; }
 
         public string? QuestionType { get; set; }

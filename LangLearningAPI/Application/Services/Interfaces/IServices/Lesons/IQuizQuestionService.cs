@@ -15,6 +15,8 @@ namespace Application.Services.Interfaces.IServices.Lesons
         Task<QuizQuestion> UpdateQuizQuestionAsync(UpdateQuizQuestionDto dto);
 
         Task DeleteQuizQuestionAsync(int id);
+
+        Task<QuizAnswer> DeleteQuizAnswerAsync(int id);
         
         Task<IEnumerable<QuizQuestionDto>> GetQuizQuestionsByQuizIdAsync(int quizId);
     }

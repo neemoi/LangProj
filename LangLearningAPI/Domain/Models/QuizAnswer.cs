@@ -1,4 +1,6 @@
-﻿namespace Domain.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Domain.Models
 {
     public class QuizAnswer
     {
@@ -10,7 +12,7 @@
         
         public bool IsCorrect { get; set; } = false;
 
-
+        [JsonIgnore]
         public QuizQuestion? Question { get; set; }
     }
 }

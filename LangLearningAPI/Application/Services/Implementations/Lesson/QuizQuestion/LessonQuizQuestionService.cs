@@ -160,6 +160,32 @@ namespace Application.Services.Implementations.Lessons
             }
         }
 
+        public async Task<QuizAnswer> DeleteQuizAnswerAsync(int id)
+        {
+            if (id <= 0)
+            {
+                _logger.LogWarning("Invalid quiz answer ID: {Id}", id);
+                throw new ArgumentOutOfRangeException(nameof(id), "ID must be greater than zero");
+            }
+
+            try
+            {
+                var deletedAnswer = await _quizQuestionRepository.DeleteQuizAnswerAsync(id);
+                _logger.LogInformation("Quiz answer with ID {Id} successfully deleted", id);
+                return deletedAnswer;
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Quiz answer not found");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in DeleteQuizAnswerAsync");
+                throw new ApplicationException("Error occurred while deleting quiz answer", ex);
+            }
+        }
+
         public async Task<IEnumerable<QuizQuestionDto>> GetQuizQuestionsByQuizIdAsync(int quizId)
         {
             try

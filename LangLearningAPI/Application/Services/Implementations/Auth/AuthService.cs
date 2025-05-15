@@ -54,7 +54,7 @@ namespace Application.Services.Implementations.Auth
                 response.Token = token;
 
                 _logger.LogInformation("User registered successfully: {Email}", registerDto.Email);
-                
+
                 return response;
             }
             catch (Exception ex) when (ex is not ApiException)
@@ -85,7 +85,7 @@ namespace Application.Services.Implementations.Auth
                 response.Token = token;
 
                 _logger.LogInformation("User logged in successfully: {EmailOrUsername}", loginDto.EmailOrUserName);
-                
+
                 return response;
             }
             catch (Exception ex) when (ex is not ApiException)
@@ -109,7 +109,7 @@ namespace Application.Services.Implementations.Auth
                 var user = await _unitOfWork.AuthRepository.BlockUserAsync(userId);
 
                 var response = _mapper.Map<UserStatusResponseDto>(user);
-                response.IsBlocked = true; 
+                response.IsBlocked = true;
 
                 _logger.LogInformation("User blocked successfully: {UserId}", userId);
                 return response;
@@ -160,12 +160,13 @@ namespace Application.Services.Implementations.Auth
 
                 var token = await _unitOfWork.AuthRepository.GeneratePasswordResetTokenAsync(forgotPasswordDto.Email);
                 //CHANGE TO REAL URL
-                var resetLink = $"{_configuration["App:FrontendUrl"]}/reset-password?email={Uri.EscapeDataString(forgotPasswordDto.Email)}&token={Uri.EscapeDataString(token)}";
+                var frontendUrl = _configuration["App:FrontendUrl"] ?? "http://localhost:3000";
+                var resetLink = $"{frontendUrl.TrimEnd('/')}/reset-password?email={Uri.EscapeDataString(forgotPasswordDto.Email)}&token={Uri.EscapeDataString(token)}";
 
                 await SendPasswordResetEmailAsync(forgotPasswordDto.Email, resetLink);
 
                 _logger.LogInformation("Password reset token generated successfully for email: {Email}", forgotPasswordDto.Email);
-                
+
                 return token;
             }
             catch (Exception ex) when (ex is not ApiException)
